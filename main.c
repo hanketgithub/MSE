@@ -24,20 +24,13 @@
 #include "psnr.h"
 
 
-#define MAX_WIDTH   3840
-#define MAX_HEIGHT  2160
-
-
-typedef struct
-{
-    char name[256];
-} string_t;
+#define MAX_WIDTH   7680
+#define MAX_HEIGHT  4320
 
 
 static uint8_t img[MAX_WIDTH * MAX_HEIGHT * 3 / 2];
 static uint8_t cmp[MAX_WIDTH * MAX_HEIGHT * 3 / 2];
 
-static string_t null;
 
 int main(int argc, const char * argv[]) {
     int fd_src;
@@ -58,7 +51,7 @@ int main(int argc, const char * argv[]) {
     double   psnr_cb;
     
     char *cp;
-    string_t output;
+    char output[256] = { 0 };
     
     if (argc < 5)
     {
@@ -79,7 +72,6 @@ int main(int argc, const char * argv[]) {
     psnr_cr     = 0;
     psnr_cb     = 0;
     cp          = NULL;
-    output      = null;
 
 
     // get src input file name from comand line
@@ -98,27 +90,27 @@ int main(int argc, const char * argv[]) {
     }
 
     // specify output file name
-    cp = strchr(argv[1], '.');
-    strncpy(output.name, argv[1], cp - argv[1]);
-    strcat(output.name, "_mse.csv");
+    cp = strrchr(argv[1], '.');
+    strncpy(output, argv[1], cp - argv[1]);
+    strcat(output, "_mse.csv");
     
     fd_mse = open
             (
-             output.name,
+             output,
              O_WRONLY | O_CREAT | O_TRUNC,
              S_IRUSR
             );
 
         
     // specify output file name
-    output = null;
-    cp = strchr(argv[1], '.');
-    strncpy(output.name, argv[1], cp - argv[1]);
-    strcat(output.name, "_psnr.csv");
-    
+    memset(output, 0, sizeof(output));
+    cp = strrchr(argv[1], '.');
+    strncpy(output, argv[1], cp - argv[1]);
+    strcat(output, "_psnr.csv");
+
     fd_psnr = open
             (
-             output.name,
+             output,
              O_WRONLY | O_CREAT | O_TRUNC,
              S_IRUSR
             );
@@ -175,7 +167,7 @@ int main(int argc, const char * argv[]) {
     close(fd_psnr);
     
     fprintf(stderr, "Done\n");
-    fprintf(stderr, "Output file: %s\n", output.name);
+    fprintf(stderr, "Output file: %s\n", output);
     
     return 0;
 }
