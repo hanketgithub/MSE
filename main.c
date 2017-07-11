@@ -43,12 +43,16 @@ int main(int argc, const char * argv[]) {
     uint32_t width;
     uint32_t height;
     uint32_t wxh;
+    uint32_t cnt;
     double   mse_luma;
     double   mse_cr;
     double   mse_cb;
     double   psnr_luma;
     double   psnr_cr;
     double   psnr_cb;
+    double   psnr_luma_accum;
+    double   psnr_cr_accum;
+    double   psnr_cb_accum;
     
     char *cp;
     char output[256] = { 0 };
@@ -65,12 +69,16 @@ int main(int argc, const char * argv[]) {
     width       = 0;
     height      = 0;
     wxh         = 0;
+    cnt         = 0;
     mse_luma    = 0;
     mse_cr      = 0;
     mse_cb      = 0;
     psnr_luma   = 0;
     psnr_cr     = 0;
     psnr_cb     = 0;
+    psnr_luma_accum = 0;
+    psnr_cr_accum = 0;
+    psnr_cb_accum = 0;
     cp          = NULL;
 
 
@@ -152,6 +160,11 @@ int main(int argc, const char * argv[]) {
             
             write(fd_mse, buf0, strlen(buf0));
             write(fd_psnr, buf1, strlen(buf1));
+
+            cnt++;
+            psnr_luma_accum += psnr_luma;
+            psnr_cr_accum   += psnr_cr;
+            psnr_cb_accum   += psnr_cb;
         }
         else
         {
@@ -168,6 +181,7 @@ int main(int argc, const char * argv[]) {
     
     fprintf(stderr, "Done\n");
     fprintf(stderr, "Output file: %s\n", output);
+    fprintf(stderr, "PSNR Y=%f U=%f V=%f\n", psnr_luma_accum / cnt, psnr_cr_accum / cnt, psnr_cb_accum / cnt);
     
     return 0;
 }
