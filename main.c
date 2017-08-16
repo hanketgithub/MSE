@@ -53,6 +53,10 @@ int main(int argc, const char * argv[]) {
     double   psnr_luma_accum;
     double   psnr_cr_accum;
     double   psnr_cb_accum;
+    double   psnr_luma_avg;
+    double   psnr_cr_avg;
+    double   psnr_cb_avg;
+    double   psnr_avg;
     
     char *cp;
     char output[256] = { 0 };
@@ -178,10 +182,15 @@ int main(int argc, const char * argv[]) {
     close(fd_cmp);
     close(fd_mse);
     close(fd_psnr);
-    
+
+    psnr_luma_avg = psnr_luma_accum / cnt;
+    psnr_cr_avg = psnr_cr_accum / cnt;
+    psnr_cb_avg = psnr_cb_accum / cnt;
+    psnr_avg = (6 * psnr_luma_avg + psnr_cr_avg + psnr_cb_avg) / 8;
+
     fprintf(stderr, "Done\n");
     fprintf(stderr, "Output file: %s\n", output);
-    fprintf(stderr, "PSNR Y=%f U=%f V=%f\n", psnr_luma_accum / cnt, psnr_cr_accum / cnt, psnr_cb_accum / cnt);
+    fprintf(stderr, "PSNR Y=%f U=%f V=%f Avg=%f\n", psnr_luma_avg, psnr_cr_avg, psnr_cb_avg, psnr_avg);
     
     return 0;
 }
