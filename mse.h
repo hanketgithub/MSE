@@ -27,6 +27,7 @@ The \b mse function computes Mean Square Error between source frame and frame to
 int mse
 (
         uint32_t wxh,
+        uint32_t bit_depth,
         double  *mse_luma,
         double  *mse_cr,
         double  *mse_cb,

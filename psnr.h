@@ -17,7 +17,7 @@ The \b psnr function computes peak signal-to-noise ratio.
 @param mse      mean square error
 @return psnr
 */
-double psnr(double mse);
+double psnr(double mse, uint32_t bit_depth);
 
 #endif
 

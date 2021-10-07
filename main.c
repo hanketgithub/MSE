@@ -28,8 +28,8 @@
 #define MAX_HEIGHT  4320
 
 
-static uint8_t img[MAX_WIDTH * MAX_HEIGHT * 3 / 2];
-static uint8_t cmp[MAX_WIDTH * MAX_HEIGHT * 3 / 2];
+static uint8_t img[MAX_WIDTH * MAX_HEIGHT * 3];
+static uint8_t cmp[MAX_WIDTH * MAX_HEIGHT * 3];
 
 
 int main(int argc, const char * argv[]) {
@@ -43,6 +43,8 @@ int main(int argc, const char * argv[]) {
     uint32_t width;
     uint32_t height;
     uint32_t wxh;
+    uint32_t bit_depth;
+    uint32_t factor;
     uint32_t cnt;
     double   mse_luma;
     double   mse_cr;
@@ -61,9 +63,9 @@ int main(int argc, const char * argv[]) {
     char *cp;
     char output[256] = { 0 };
     
-    if (argc < 5)
+    if (argc < 6)
     {
-        fprintf(stderr, "useage: %s [src_file] [cmp_file] [width] [height]\n", argv[0]);
+        fprintf(stderr, "useage: %s [src_file] [cmp_file] [width] [height] [bit_depth]\n", argv[0]);
         
         return -1;
     }
@@ -73,6 +75,8 @@ int main(int argc, const char * argv[]) {
     width       = 0;
     height      = 0;
     wxh         = 0;
+    bit_depth   = 0;
+    factor      = 0;
     cnt         = 0;
     mse_luma    = 0;
     mse_cr      = 0;
@@ -132,19 +136,23 @@ int main(int argc, const char * argv[]) {
     
     wxh = width * height;
 
+    bit_depth = atoi(argv[5]);
+    factor = bit_depth == 8 ? 1 : 2;
     
     fprintf(stderr, "Processing: ");
 
     while (1)
     {
-        rd_sz = read(fd_src, img, wxh * 3 / 2);
-        rd_sz = read(fd_cmp, cmp, wxh * 3 / 2);
+        uint32_t fb_size = wxh * 3 / 2 * factor;
+        rd_sz = read(fd_src, img, fb_size);
+        rd_sz = read(fd_cmp, cmp, fb_size);
         
-        if (rd_sz == wxh * 3 / 2)
+        if (rd_sz == fb_size)
         {            
             mse
             (
                 wxh,
+                bit_depth,
                 &mse_luma,
                 &mse_cr,
                 &mse_cb,
@@ -152,9 +160,9 @@ int main(int argc, const char * argv[]) {
                 cmp
             );
             
-            psnr_luma   = psnr(mse_luma);
-            psnr_cr     = psnr(mse_cr);
-            psnr_cb     = psnr(mse_cb);
+            psnr_luma   = psnr(mse_luma, bit_depth);
+            psnr_cr     = psnr(mse_cr, bit_depth);
+            psnr_cb     = psnr(mse_cb, bit_depth);
 
             char buf0[200];
             char buf1[200];
