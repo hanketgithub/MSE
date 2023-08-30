@@ -24,7 +24,7 @@
 #include "psnr.h"
 
 
-#define MAX_WIDTH   7680
+#define MAX_WIDTH   8192
 #define MAX_HEIGHT  4320
 
 
