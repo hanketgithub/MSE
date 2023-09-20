@@ -198,6 +198,7 @@ int main(int argc, const char * argv[]) {
 
     fprintf(stderr, "Done\n");
     fprintf(stderr, "Output file: %s\n", output);
+    fprintf(stderr, "Compared %d frames\n", cnt);
     fprintf(stderr, "PSNR Y=%f U=%f V=%f Avg=%f\n", psnr_luma_avg, psnr_cr_avg, psnr_cb_avg, psnr_avg);
     
     return 0;
